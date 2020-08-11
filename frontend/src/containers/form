@@ -1,0 +1,71 @@
+
+import React from 'react'
+import { Form, Icon, Input, Button, Select } from 'antd';
+
+function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
+
+class AddChatFor extends React.Component {
+
+    state = {
+        username : [],
+        error: null
+    }
+
+
+    handlechange = value => {
+        this.setState({
+            username: value
+        })
+    }
+
+
+
+  componentDidMount() {
+    // To disable submit button at the beginning.
+    this.props.form.validateFields();
+  }
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+  };
+
+  render() {
+    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+
+    // Only show error after a field is touched.
+    const usernameError = isFieldTouched('username') && getFieldError('username');
+ 
+    return (
+      <Form.create>
+        <Form layout="inline" onSubmit={this.handleSubmit}>
+        <Form.Item validateStatus={usernameError ? 'error' : ''} help={usernameError || ''}>
+          {getFieldDecorator('username', {
+            rules: [{ required: true, message: 'Please input your username!' }],
+          })(
+            <Select mode="tags" style={{ width: "100%" }} placeholder="add a user" onChange={this.handlechange}  >
+                {[]}
+            </Select>
+          )}
+        </Form.Item>
+        
+        <Form.Item>
+          <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())}>
+            Start a Chat
+          </Button>
+        </Form.Item>
+      </Form>
+      </Form.create>
+      
+    );
+  }
+}
+
+
+export default AddChatFor;
